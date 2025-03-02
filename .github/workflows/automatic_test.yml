@@ -1,4 +1,4 @@
-name: run automatic test
+name: Run Automatic Tests
 
 on: 
   push:
@@ -14,15 +14,32 @@ jobs:
 
     steps:
       - name: Descargar el código
-        uses: actions/checkout@v4  # Clona el repo en el runner
+        uses: actions/checkout@v4
+
+      - name: Cache de dependencias de Node.js
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-${{ runner.os }}-
 
       - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # Usa la versión 18 de Node.js
+          node-version: 18
+          cache: "npm"  # Usa cache automático de npm
 
       - name: Instalar dependencias
-        run: npm install  # Usa yarn install si usas Yarn
+        run: npm install
 
       - name: Ejecutar pruebas
         run: npm test
+
+      - name: Guardar logs de pruebas si fallan
+        if: failure()
+        run: cat ./jest-results.log
+
+      - name: Notificación en caso de fallo
+        if: failure()
+        run: echo "Las pruebas fallaron. Revisa el log en GitHub Actions."
