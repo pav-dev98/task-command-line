@@ -1,4 +1,4 @@
-import { readFilePromise, writeFilePromise } from "./fileStream.js";
+import { readFilePromise, writeFilePromise } from "./fileManager.js";
 
 export async function createTask(taskObj) {
   let currentTasks = await listTasks();
@@ -10,7 +10,7 @@ export async function createTask(taskObj) {
     currentTasks.push({...taskObj,id:1});
   }
   try {
-    await writeFilePromise(JSON.stringify(currentTasks));
+    await writeFilePromise('./db.json',JSON.stringify(currentTasks));
     return { error: false, message: "task created successfully" };
   } catch (e) {
     return { error: true, message: e.message };
@@ -25,7 +25,7 @@ export function deleteTask() {}
 
 export async function listTasks() {
   try {
-    let dataStream = await readFilePromise();
+    let dataStream = await readFilePromise('./db.json');
 
     if(!dataStream){
         return [];
