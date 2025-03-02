@@ -1,10 +1,12 @@
-const readLine = require("node:readline");
-const fs = require('node:fs');
-const { stdin: input, stdout: output } = require("node:process");
-const { error } = require("node:console");
-// const rl = readLine.createInterface({input,output});
+// const readLine = require("node:readline");
+import readLine from 'node:readline';
 
-// // crear un aplicacion de linea de commandos
+import {stdin as input, stdout as output } from 'node:process';
+
+import { error  } from 'node:console';
+
+import {createTask,listTasks} from './tasks.js'
+
 const settingsApp = {
   title: "          task managment             ",
 };
@@ -19,28 +21,6 @@ function getPromiseReadline(someText) {
   });
 
   return promise;
-}
-
-function readFilePromise(){
-  return  new Promise((response,reject)=>{
-    fs.readFile('./db.json','utf8',(err,data)=>{
-      if(err){
-        return reject(err)
-      }
-      return response(data)
-  })
-  })
-}
-
-function writeFilePromise(message){
-  return new Promise((response,reject)=>{
-    fs.writeFile('./db.json',message,(err)=>{
-      if(err){
-        return reject(err)
-      }
-      response({message : "succesfully write"});
-    })
-  })
 }
 
 function printMenuToConsole() {
@@ -64,23 +44,18 @@ async function main() {
         let title = await getPromiseReadline("escriba el titulo de la tarea");
         let description = await getPromiseReadline("escriba la descripcion de la tarea");
         let finished = false;
-        let id = 1
-        let object = {
+        let objectTask = {
           title,
           description,
-          finished,
-          id
+          finished
         }
-        let currentInfoDataStream = await readFilePromise();
-        let currentDataJson = JSON.parse(currentInfoDataStream);
-        currentDataJson.push(object);
-        let response = await writeFilePromise(JSON.stringify(currentDataJson));
-        console.log(response.message)
+        let {error,message} = await createTask(objectTask);
+        if(!error){
+          return console.log(message+" 🚀")
+        }
+        return "ops something error has ocurred"
 
-        let dataStream = await readFilePromise();
-        let jsonData = JSON.parse(dataStream);
-        console.log("json data", jsonData)
-        // aqui guardamos la tarea en un archivo json.
+
     }
     if(crudOption === '2'){
         console.log("borramos la tarea")
