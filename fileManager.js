@@ -1,7 +1,7 @@
 import fs from 'node:fs';
-export function readFilePromise(){
+export function readFilePromise(file){
   return  new Promise((response,reject)=>{
-    fs.readFile('./db.json','utf8',(err,data)=>{
+    fs.readFile(file,'utf8',(err,data)=>{
       if(err){
         return reject(err)
       }
@@ -11,9 +11,9 @@ export function readFilePromise(){
 }
 
 
-export function writeFilePromise(message){
+export function writeFilePromise(file,message){
   return new Promise((response,reject)=>{
-    fs.writeFile('./db.json',message,(err)=>{
+    fs.writeFile(file,message,(err)=>{
       if(err){
         return reject(err)
       }
