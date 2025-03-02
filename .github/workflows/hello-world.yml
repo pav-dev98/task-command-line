@@ -1,0 +1,25 @@
+name: Ejecutar Pruebas Automáticas
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4  # Clona el repo en el runner
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18  # Usa la versión 18 de Node.js
+
+      - name: saludar
+        run: echo "hola mundo"  # Usa yarn install si usas Yarn
