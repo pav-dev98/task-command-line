@@ -21,5 +21,8 @@ jobs:
         with:
           node-version: 18  # Usa la versión 18 de Node.js
 
-      - name: run tests
-        run: npm test  # Usa yarn install si usas Yarn
+      - name: Instalar dependencias
+        run: npm install  # Usa yarn install si usas Yarn
+
+      - name: Ejecutar pruebas
+        run: npm test
