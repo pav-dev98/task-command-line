@@ -1,16 +1,19 @@
 import { readFilePromise, writeFilePromise } from "./fileManager.js";
 
 export async function createTask(taskObj) {
+  let newTaskObj = {}
   let currentTasks = await listTasks();
   if (currentTasks.length) {
     let lastTask = currentTasks.at(-1);
-    currentTasks.push({ ...taskObj, id: lastTask.id + 1 });
+    newTaskObj = {...taskObj, id: lastTask.id + 1 }
+    currentTasks.push(newTaskObj);
   } else {
-    currentTasks.push({ ...taskObj, id: 1 });
+    newTaskObj = {...taskObj, id: 1 }
+    currentTasks.push(newTaskObj);
   }
   try {
     await writeFilePromise("./db.json", JSON.stringify(currentTasks));
-    return { error: false, message: "task created successfully" };
+    return { error: false, message: "task created successfully",taskCreated:newTaskObj};
   } catch (e) {
     return { error: true, message: e.message };
   }
