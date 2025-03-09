@@ -5,7 +5,7 @@ import {stdin as input, stdout as output } from 'node:process';
 
 import { error  } from 'node:console';
 
-import {createTask,listTasks} from './tasks.js'
+import {createTask,deleteTask,listTasks} from './tasks.js'
 
 const settingsApp = {
   title: "          task managment             ",
@@ -60,7 +60,8 @@ async function main() {
     if(crudOption === '2'){
         console.log("borramos la tarea")
         let idTaskToDelete = await getPromiseReadline("digite el id de la tarea");
-        console.log("eliminando la tarea");
+        let response = await deleteTask(idTaskToDelete);
+        console.log(response)
     }
     if(crudOption === '3'){
         let idTaskToUpdate = await getPromiseReadline("digite el id de la tarea");
