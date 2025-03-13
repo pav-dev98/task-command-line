@@ -1,4 +1,8 @@
-import { readFilePromise, writeFilePromise } from "./fileManager.js";
+import path from 'path';
+import { readFilePromise, writeFilePromise , ensureFileExist} from "./fileManager.js";
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = path.dirname(__filename);
+const db_path = path.join(__dirname, 'db.json');
 
 export async function createTask(taskObj) {
   let newTaskObj = {}
@@ -12,7 +16,7 @@ export async function createTask(taskObj) {
     currentTasks.push(newTaskObj);
   }
   try {
-    await writeFilePromise("./db.json", JSON.stringify(currentTasks));
+    await writeFilePromise(db_path, JSON.stringify(currentTasks));
     return { error: false, message: "task created successfully",taskCreated:newTaskObj};
   } catch (e) {
     return { error: true, message: e.message };
@@ -28,7 +32,7 @@ export async function deleteTask(idTaskToDelete) {
       (elem) => elem.id !== idToDelete
     );
     await writeFilePromise(
-      "./db.json",
+      db_path,
       JSON.stringify(allTaskWithOutTheElement)
     );
     return { error: false, message: "task delete successfully" };
@@ -38,19 +42,22 @@ export async function deleteTask(idTaskToDelete) {
 }
 
 export async function listTasks() {
-  try {
-    let dataStream = await readFilePromise("./db.json");
+    try{
+      await ensureFileExist(db_path)
+      let dataStream = await readFilePromise(db_path);
+      if (!dataStream) {
+        console.log('la bd esta vacia');
+        return [];
+      }
+  
+      let dataJson = JSON.parse(dataStream);
+      if (!Array.isArray(dataJson)) {
+        throw new Error("json tasks file is not array of task elements");
+      }
+      return dataJson;
 
-    if (!dataStream) {
-      return [];
+    }catch(err){
+      console.log('error al leer',err);
     }
 
-    let dataJson = JSON.parse(dataStream);
-    if (!Array.isArray(dataJson)) {
-      throw new Error("json tasks file is not array of task elements");
-    }
-    return dataJson;
-  } catch (e) {
-    console.log(e);
-  }
 }
