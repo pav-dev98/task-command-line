@@ -5,7 +5,7 @@ import {stdin as input, stdout as output } from 'node:process';
 
 import { error  } from 'node:console';
 
-import {createTask,deleteTask,listTasks} from './tasks.js'
+import {createTask,deleteTask,listTasks,updateTask} from './tasks.js'
 
 const settingsApp = {
   title: "          task managment             ",
@@ -65,7 +65,21 @@ async function main() {
     }
     if(crudOption === '3'){
         let idTaskToUpdate = await getPromiseReadline("digite el id de la tarea");
-        console.log("updateando la tarea");
+        console.log("buscando la tarea si existe\n");
+        console.log("rellene los nuevos campos de la tarea dejar en blanco si no desea modificar \n")
+        let titleResponse = await getPromiseReadline("title: ");
+        let descriptionResponse = await getPromiseReadline("description: ")
+        let finishedResponse =  await getPromiseReadline("finished (y/n): ")
+
+        let newkeysForUpdated = {
+          ...(titleResponse && {title : titleResponse}),
+          ...(descriptionResponse && {description: descriptionResponse}),
+          ...(finishedResponse && {finished: finishedResponse === 'y'? true:false}) 
+        }
+
+        let updateResponse = await updateTask(idTaskToUpdate,newkeysForUpdated);
+        console.log("tarea updateada",updateResponse)
+
     }
   }
   else{
