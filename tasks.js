@@ -22,7 +22,45 @@ export async function createTask(taskObj) {
     return { error: true, message: e.message };
   }
 }
-export async function updateTask(taskUpdated) {}
+export async function newCreateTask(taskObj){
+  let newTaskObj = {}
+  let currentTasks = await listTasks();
+  if (currentTasks.length) {
+    let lastTask = currentTasks.at(-1);
+    newTaskObj = {...taskObj, id: lastTask.id + 1 }
+    currentTasks.push(newTaskObj);
+  } else {
+    newTaskObj = {...taskObj, id: 1 }
+    currentTasks.push(newTaskObj);
+  }
+  try {
+    await writeFilePromise(db_path, JSON.stringify(currentTasks));
+    return newTaskObj;
+  } catch (e) {
+    return { error: true, message: e.message };
+  }
+}
+export async function updateTask(id,newTaskKeys) {
+  let idToUpdate = Number(id);
+  let indexUpdated;
+
+  let allTasks = await listTasks();
+  let allTaskWithTheElementUpdated = allTasks.map((task, index)=>{
+      if(task.id !==idToUpdate){
+        return task;
+      }
+      indexUpdated = index;
+      return {...task,...newTaskKeys}
+  })
+
+  try{
+    await writeFilePromise(db_path, JSON.stringify(allTaskWithTheElementUpdated));
+    return allTaskWithTheElementUpdated[indexUpdated]
+  }
+  catch(e){
+    return { error: true, message: e.message };
+  }
+}
 
 export async function deleteTask(idTaskToDelete) {
   try {

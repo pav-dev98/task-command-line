@@ -1,5 +1,5 @@
 import { readFilePromise, writeFilePromise } from "../fileManager.js";
-import { deleteTask,createTask } from "../tasks.js";
+import { deleteTask,createTask, updateTask ,newCreateTask} from "../tasks.js";
 
 
 
@@ -49,4 +49,27 @@ test("delete task", async ()=>{
     let deleteResponse = await deleteTask(testTask.id)
     expect(deleteResponse).toEqual({ error: false, message: "task delete successfully"})
 });
+
+test("update task", async ()=> {
+    let tTForCreate = {
+        title: "test",
+        description: "just a test",
+        finished: false
+    }
+
+    let tTForUpdate = {
+        title:"test updated",
+        description: "just a test updated",
+        finished: true
+    }
+
+    let tTcreated = await newCreateTask(tTForCreate)
+    let {id:idCreated,...restTaskCreated} = tTcreated;
+    expect(tTForCreate).toEqual(restTaskCreated);
+
+    let tTupdated = await updateTask(idCreated,tTForUpdate);
+    let {id:idUpdated,...restTaskUpdated} = tTupdated;
+    expect(tTForUpdate).toEqual(restTaskUpdated);
+    
+})
 
